@@ -1,0 +1,35 @@
+#!/usr/bin/env psrsh
+# apply rfi mask 
+# equivalent of paz -k rfi_mask.dat
+zap chan 0-210
+zap chan 286-497
+zap chan 831-834
+zap chan 883-886
+zap chan 936-938
+zap chan 1099-1101
+zap chan 1108-1111
+zap chan 1113-1128
+zap chan 1166-1167
+zap chan 1175-1177
+zap chan 1180-1181
+zap chan 1184-1186
+zap chan 1194-1196
+zap chan 1199-1201
+zap chan 1204-1205
+zap chan 1223-1224
+zap chan 1228-1229
+zap chan 1276-1277
+zap chan 1295-1296
+zap chan 1300-1301
+zap chan 1309-1311
+zap chan 1333-1335
+zap chan 1338-1339
+zap chan 1347-1349
+zap chan 1357-1358
+zap chan 1362-1363
+zap chan 1387-2128
+zap chan 2700-2709
+zap chan 2900-3044
+zap chan 3174-3687
+zap chan 3896-4095
+
