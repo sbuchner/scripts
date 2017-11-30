@@ -1,4 +1,6 @@
 #!/usr/bin/env psrsh
+# apply rfi mask 
+# median zap
 p
 zap chan 0-210
 zap chan 286-497
