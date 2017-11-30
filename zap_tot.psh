@@ -1,0 +1,23 @@
+#!/usr/bin/env psrsh
+p
+zap chan 0-210
+zap chan 3896-4095
+zap median window=50
+zap median
+zap mow robust
+zap mow
+unload ext=zp
+push
+set zp
+F
+unload ext=zFp
+T x6
+unload ext=zFTx6p
+#get Fzp
+T x5
+unload ext=zFTx30p
+T
+unload ext=zFTp
+pop
+T
+unload ext=zTp
