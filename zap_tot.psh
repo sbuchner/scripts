@@ -9,15 +9,15 @@ zap mow
 unload ext=zp
 push
 set zp
+D
 F
 unload ext=zFp
 T x6
-unload ext=zFTx6p
+unload ext=zFT6p
 #get Fzp
-T x5
-unload ext=zFTx30p
 T
 unload ext=zFTp
 pop
+D
 T
 unload ext=zTp
