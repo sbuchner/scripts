@@ -22,6 +22,7 @@ parser = argparse.ArgumentParser(description='psradd .ar sub-ints to creates .to
 parser.add_argument('-i','--input',dest='input',metavar='<input_dir>',default='',help='input directory')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='verbose mode')
 parser.add_argument('-o','--output',dest='output',metavar='output_dir',default='.',help='output directory')
+parser.add_argument('-p','--psr',dest='psr',help='select this pulsar')
 parser.add_argument('-u','--update',dest='update',action='store_true',help='update files')
 args = parser.parse_args()
 
@@ -29,7 +30,8 @@ args = parser.parse_args()
 ##################################################
 # start of code
 # get current working directory
-cwd = os.getcwd()
+#cwd = os.getcwd()
+cwd = '/data2/'
 # define PTUSE archive directory
 #arc = '/archive2/data/beamformer/pulsartiming/'
 
@@ -50,7 +52,12 @@ else:
 # Find all directories in the archive that have the pulsar obs
 #direcs =glob.glob(str(arc) + 'PTUSE_1_*' + str(args.psr))
 print args.input
-direcs=glob.glob(str(args.input)+'*')
+if args.psr:
+	puls=args.psr.replace('-','m').replace('+','p')
+        print puls
+        direcs=glob.glob(str(args.input)+'*'+puls+'*')
+else:
+	direcs=glob.glob(str(args.input)+'*')
 #print direcs
 # Add the subints 
 for obs in direcs:
@@ -63,10 +70,9 @@ for obs in direcs:
     input_files.sort()
 #    print input_files
 
-    archives = []
-    archives = [psrchive.Archive_load(input_dir + file) for file in input_files]
+    archive =psrchive.Archive_load(input_dir + input_files[0])
 
-    psr=archives[0].get_source()
+    psr=archive.get_source()
     print args.output+'/'+psr
     
     if os.access(args.output+'/'+psr, os.F_OK):
@@ -77,13 +83,12 @@ for obs in direcs:
     output_dir=args.output+'/'+psr	
 
 
-    filename=archives[0].get_filename().split('/')[-1]
+    filename=archive.get_filename().split('/')[-1]
    
     print "First file = %s" %(filename)
     utc=filename.replace('-','',2).replace(':','',1).replace('-','T').split(':')[0]
     outputfile=output_dir+'/'+psr+'.'+utc+'.tot'
     print "Writing to %s" %(outputfile)
-
     print args.update
     e = os.access(outputfile,os.F_OK)
     print e
@@ -94,13 +99,9 @@ for obs in direcs:
            if args.verbose:
               print '\nLoading files from %s:' %(input_dir)
               print "writing" + outputfile
-           for i in range(1, len(archives)):
-              if args.verbose:
-                 print "Adding %s" %(archives[i].get_filename().split('/')[-1])
-              archives[0].append(archives[i])
+              
+              subprocess.call(['psradd','-v', '--autoT','-o' + outputfile, obs + '/*.ar'])
 
-              raw_archive = archives[0].clone()
 
-              raw_archive.unload(outputfile)
 
 
