@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 
+# Copyright (C) 2017 by Sarah Buchner
+# Licensed under the Academic Free License version 3.0
+# This program comes with ABSOLUTELY NO WARRANTY.
+# You are free to modify and redistribute this code as long
+# as you do not remove the above attribution and reasonably
+# inform recipients that you have modified the original work.
+
 import numpy as np
 import os, sys, glob
 import argparse
 import psrchive
 import subprocess
-##################################################
+
 # initialize parameters
 parser = argparse.ArgumentParser(description='psradd .ar sub-ints to creates .tot file for observation, \
                                  scrunches the total file in pol,time and freq.')
@@ -19,21 +26,12 @@ parser = argparse.ArgumentParser(description='psradd .ar sub-ints to creates .to
 #    parser.add_argument('-m', '--mask', dest='rfi_mask', nargs='?', const=True, default=None, help='apply RFI mask from file or use default one')
 #    parser.add_argument('-p', '--psrsh', dest='psrsh_save', action='store_true', help='write zap commands to psrsh script file')
 
-parser.add_argument('-i','--input',dest='input',metavar='<input_dir>',default='',help='input directory')
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='verbose mode')
 parser.add_argument('-o','--output',dest='output',metavar='output_dir',default='.',help='output directory')
 parser.add_argument('-p','--psr',dest='psr',help='select this pulsar')
-parser.add_argument('-u','--update',dest='update',action='store_true',help='update files')
+parser.add_argument('-u','--update',dest='update',action='store_true',help='update files')   # by default existing files are not overwritten
+parser.add_argument('files', nargs='*') 
 args = parser.parse_args()
-
-# median zap
-##################################################
-# start of code
-# get current working directory
-#cwd = os.getcwd()
-cwd = '/data2/'
-# define PTUSE archive directory
-#arc = '/archive2/data/beamformer/pulsartiming/'
 
 #check that we have write permission in output dir
 if not args.output:
@@ -48,20 +46,19 @@ else:
         pass
     else:
         raise RuntimeError('Output directory without write permissions.')
-
-# Find all directories in the archive that have the pulsar obs
-#direcs =glob.glob(str(arc) + 'PTUSE_1_*' + str(args.psr))
-print args.input
 if args.psr:
-	puls=args.psr.replace('-','m').replace('+','p')
-        print puls
-        direcs=glob.glob(str(args.input)+'*'+puls+'*')
-else:
-	direcs=glob.glob(str(args.input)+'*')
-#print direcs
-# Add the subints 
-for obs in direcs:
+    puls=args.psr.replace('-','m').replace('+','p')
+    print "Processing pulsar %s"  %(args.psr)
+ 
+for obs in args.files:
+# if psr selected then process only that pulsar    
+    if args.psr:
+        if puls not in obs:
+		print "Skipping obs %s" %(obs)
+		continue
+#
     print obs
+#
     input_files = []
     input_dir = obs + '/'
     for file in os.listdir(input_dir):
@@ -73,11 +70,8 @@ for obs in direcs:
     archive =psrchive.Archive_load(input_dir + input_files[0])
 
     psr=archive.get_source()
-    print args.output+'/'+psr
     
-    if os.access(args.output+'/'+psr, os.F_OK):
-       print "exists"
-    else:
+    if not os.access(args.output+'/'+psr, os.F_OK):
        os.mkdir(args.output+'/'+psr)
     
     output_dir=args.output+'/'+psr	
@@ -85,22 +79,20 @@ for obs in direcs:
 
     filename=archive.get_filename().split('/')[-1]
    
-    print "First file = %s" %(filename)
     utc=filename.replace('-','',2).replace(':','',1).replace('-','T').split(':')[0]
     outputfile=output_dir+'/'+psr+'.'+utc+'.tot'
-    print "Writing to %s" %(outputfile)
-    print args.update
     e = os.access(outputfile,os.F_OK)
-    print e
     if (os.access(outputfile, os.F_OK) and (not args.update)):
-           print "Output file %s exists" %(outputfile)
-           print "skipping %s" %(outputfile)
-    else:    
+           print "Output file %s exists skipping" %(outputfile)
+
+    else:  
+           print '\nLoading files from %s -> %s\n' %(input_dir,outputfile)
+  
            if args.verbose:
-              print '\nLoading files from %s:' %(input_dir)
-              print "writing" + outputfile
-              
               subprocess.call(['psradd','-v', '--autoT','-o' + outputfile, obs + '/*.ar'])
+	   else:
+              subprocess.call(['psradd', '--autoT','-o' + outputfile, obs + '/*.ar'])
+	
 
 
 
