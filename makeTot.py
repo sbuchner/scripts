@@ -79,7 +79,8 @@ for obs in args.files:
 
     filename=archive.get_filename().split('/')[-1]
    
-    utc=filename.replace('-','',2).replace(':','',1).replace('-','T').split(':')[0]
+    utc=filename.replace('-','',2).replace(':','',2).replace('-','T').replace('.ar','')
+    print utc
     outputfile=output_dir+'/'+psr+'.'+utc+'.tot'
     e = os.access(outputfile,os.F_OK)
     if (os.access(outputfile, os.F_OK) and (not args.update)):
