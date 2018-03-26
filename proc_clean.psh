@@ -1,0 +1,19 @@
+#!/usr/bin/env psrsh
+# run on *.clean 
+# p scrunch
+# zap edges
+p
+zap chan 0-210
+zap chan 3896-4095
+unload ext=czp
+push
+set czp
+F
+unload ext=czFp
+T x6
+unload ext=czFTx6p
+T
+unload ext=czFTp
+pop
+T
+unload ext=czTp
