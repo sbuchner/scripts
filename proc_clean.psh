@@ -1,13 +1,10 @@
 #!/usr/bin/env psrsh
-# apply rfi mask 
-# median zap
+# run on *.clean 
+# p scrunch
+# zap edges
 p
 zap chan 0-210
 zap chan 3896-4095
-zap median window=50
-zap median
-zap mow robust
-zap mow
 unload ext=czp
 push
 set czp
@@ -15,9 +12,6 @@ F
 unload ext=czFp
 T x6
 unload ext=czFTx6p
-#get Fzp
-T x5
-unload ext=czFTx30p
 T
 unload ext=czFTp
 pop
