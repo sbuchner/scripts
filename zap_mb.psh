@@ -1,3 +1,0 @@
-#!/usr/bin/env psrsh
-delete freq <1208 >1520
-unload ext=mbzp
