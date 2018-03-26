@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from matplotlib import cm
 from matplotlib import colors
 import psrchive as psr
