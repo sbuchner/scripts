@@ -75,17 +75,22 @@ for obs in args.files:
     utc=filename.replace('-','',2).replace(':','',2).replace('-','T').replace('.ar','')
     print utc
     outputfile=output_dir+'/'+psr+'.'+utc+'.tot'
+    cleanfile=output_dir+'/'+psr+'.'+utc+'.clean' 
+    print outputfile,cleanfile
     e = os.access(outputfile,os.F_OK)
     if (os.access(outputfile, os.F_OK) and (not args.update)):
            print "Output file %s exists skipping" %(outputfile)
 
-    else:  
-           print '\nLoading files from %s -> %s\n' %(input_dir,outputfile)
+    else:
+	   if (os.access(cleanfile, os.F_OK) and (not args.update)):
+	        print "Output file %s exists skipping" %(cleanfile)
+  	   else:
+           	print '\nLoading files from %s -> %s\n' %(input_dir,outputfile)
   
-           if args.verbose:
-              subprocess.call(['psradd','-v', '--autoT','-o' + outputfile, obs + '/*.ar'])
-	   else:
-              subprocess.call(['psradd', '--autoT','-o' + outputfile, obs + '/*.ar'])
+	        if args.verbose:
+                   subprocess.call(['psradd','-v', '--autoT','-o' + outputfile, obs + '/*.ar'])
+	        else:
+                   subprocess.call(['psradd', '--autoT','-o' + outputfile, obs + '/*.ar'])
 	
 
 
