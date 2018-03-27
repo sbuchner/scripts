@@ -1,0 +1,7 @@
+#!/usr/bin/env psrsh
+# run on czp
+delete freq <1208 >1520
+#edit bw=312.5
+T x8
+F
+unload ext=mbt8f
