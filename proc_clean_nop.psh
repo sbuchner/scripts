@@ -1,0 +1,18 @@
+#!/usr/bin/env psrsh
+# run on *.clean 
+# p scrunch
+# zap edges
+zap chan 0-210
+zap chan 3896-4095
+unload ext=cz
+push
+set cz
+F
+unload ext=czF
+T x6
+unload ext=czFTx6
+T
+unload ext=czFT
+pop
+T
+unload ext=czT
