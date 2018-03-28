@@ -19,6 +19,8 @@ parser = argparse.ArgumentParser(description='psradd .ar sub-ints to creates .to
 parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='verbose mode')
 parser.add_argument('-o','--output',dest='output',metavar='output_dir',default='.',help='output directory')
 parser.add_argument('-p','--psr',dest='psr',help='select this pulsar')
+parser.add_argument('-s','--single',dest='single',help='include single antenna observations')
+parser.add_argument('-c','--cal',dest='cal',help='include calibration observations')
 parser.add_argument('-u','--update',dest='update',action='store_true',help='update files')   # by default existing files are not overwritten
 parser.add_argument('files', nargs='*') 
 args = parser.parse_args()
@@ -48,7 +50,30 @@ for obs in args.files:
 			print "Skipping obs %s" %(obs)
 		continue
 #
+    if not args.cal:
+	if "_R" in obs:
+		print "Skipping cal obs %s" %(obs)
+		continue
     print obs
+
+# skip single antenna observations unless specified
+    if not args.single:
+
+	obs_header = obs + '/' + 'obs.header'
+	print obs_header
+	if os.access(obs_header, os.F_OK):
+	      reply=subprocess.Popen("grep ANTENNAE " + obs_header,stdout=subprocess.PIPE,shell=True).communicate()
+	      print reply[1]
+	      if (reply[1] != 'None'):
+		 print reply[1]
+		 try:
+			 Ant=reply[0].split()[1].split(',')
+        	      	 print "Ants = %d" %(len(Ant))
+	      		 if len(Ant) < 2:
+		            print "Skipping %s as Ants = %d" %(obs,len(Ant))
+        	            continue
+           	 except:
+		    print "continue"
 #
     input_files = []
     input_dir = obs + '/'
