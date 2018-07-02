@@ -10,8 +10,8 @@ push
 set czp
 F
 unload ext=czFp
-T x6
-unload ext=czFTx6p
+T x8
+unload ext=czFTx8p
 T
 unload ext=czFTp
 pop
